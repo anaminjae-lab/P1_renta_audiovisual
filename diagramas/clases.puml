@@ -1,0 +1,156 @@
+@startuml clases
+skinparam classAttributeIconSize 0
+skinparam dpi 150
+skinparam shadowing false
+skinparam class {
+  BackgroundColor #FDFDFD
+  BorderColor #2F4F6F
+  ArrowColor #2F4F6F
+}
+hide empty members
+title Renta de equipo audiovisual — diagrama de clases (esqueleto: INCOMPLETO, debes actualizarlo)
+
+package modelo {
+  abstract class Tarifable <<ABC>> {
+    {static} MONEDA : str
+    {static} IVA : float
+    + cotizar(dias:int) : float
+    + cotizar_con_iva(dias:int) : float
+    # {abstract} _calcular(dias:int) : float
+    {static} + redondear(v:float) : float
+    {classifier} + moneda() : str
+  }
+  class Clave {
+    {static} - _contadores : dict
+    {static} - _candado : Lock
+    {static} + es_valida(t:str) : bool
+    {classifier} + siguiente(prefijo:str) : str
+    {classifier} + registrar(clave:str)
+  }
+  abstract class Equipo {
+    - __clave : str
+    # _nombre : str
+    # _precio_base : float
+    + tipo : str <<property>>
+    + {abstract} factor() : float
+    + {abstract} valor_atributo() : int
+    + recargo() : float
+    + copiar() : Equipo
+    {static} + crear(prefijo, nombre, precio, valor, clave) : Equipo
+  }
+  class Capacidad {
+    + recargo() : float
+    + etiquetas() : list[str]
+  }
+  class Asegurable {
+    {static} RECARGO : float = ?
+  }
+  class Transportable {
+    {static} RECARGO : float = ?
+  }
+  class Camara <<CAM>> {
+    # _resolucion_mp : int  (8..100)
+    {static} ESCALA : int = ?
+    + factor() : float
+  }
+  class Iluminacion <<ILU>> {
+    # _potencia_w : int  (50..2000)
+    {static} ESCALA : int = ?
+    + factor() : float
+  }
+  class Audio <<AUD>> {
+    # _canales : int  (1..32)
+    {static} ESCALA : int = ?
+    + factor() : float
+    + recargo() : float  ' colisión
+  }
+
+  abstract class Nivel <<Singleton>> {
+    {static} - _instancia : Nivel
+    + __new__(cls) : Nivel
+    + {abstract} descuento() : float
+    {static} + desde_nombre(n:str) : Nivel
+  }
+  class Basico
+  class Plata
+  class Oro
+  class Productora <<PRD>> {
+    - __clave : str
+    # _nombre, _correo
+    {classifier} + desde_texto(t:str) : Productora
+    + descuento() : float
+  }
+  class Renta <<REN>> {
+    {static} TRANSICIONES : dict
+    - __estado : str
+    - __lineas : list[Linea]
+    # _candado : Lock
+    + alertada : bool
+    + agregar(equipo, dias) : Linea
+    + cambiar_estado(nuevo:str)
+    + subtotal() / descuento() / total()
+    + __getstate__() / __setstate__()
+  }
+  class "Renta.Linea" as Linea {
+    - __contenedora : Renta
+    - __equipo : Equipo
+    - __dias : int
+    + importe() : float
+  }
+  class Inventario {
+    - __equipos : dict[str, Equipo]
+    + agregar(*equipos) : int
+    + buscar(**criterios) : list
+    + ordenados(por, descendente) : list
+    + resumen_por_tipo() : dict
+  }
+}
+package funcional {
+  class Regla {
+    + __call__(equipo) : bool
+    + y(o) / o(o) / negar() : Regla
+  }
+}
+package concurrencia {
+  abstract class TareaPeriodica {
+    - _alto : Event
+    + run() / detener()
+    + {abstract} ejecutar()
+  }
+}
+package servicio {
+  class ServicioRentas <<fachada>> {
+    {static} PLAZO = 3
+    + __enter__() / __exit__()
+    + revisar() : tuple[int,int]
+    + conteo_por_estado() / ingresos_por_tipo() / top_equipos()
+  }
+  class "ServicioRentas.Monitor" as Monitor
+}
+package eventos {
+  abstract class Oyente {
+    + {abstract} notificar(e, d)
+  }
+}
+
+Tarifable <|-- Equipo
+Capacidad <|-- Asegurable
+Capacidad <|-- Transportable
+Equipo <|-- Camara
+Equipo <|-- Iluminacion
+Equipo <|-- Audio
+Nivel <|-- Basico
+Nivel <|-- Plata
+Nivel <|-- Oro
+Productora --> "1" Nivel
+Renta --> "1" Productora
+Linea --> "1" Equipo
+Inventario o-- "0..*" Equipo
+Equipo ..> Clave
+TareaPeriodica <|-- Monitor
+Monitor --> ServicioRentas : servicio
+ServicioRentas --> Inventario
+ServicioRentas --> "0..*" Oyente
+Regla ..> Equipo
+note "Faltan: capacidades de cada subtipo,\nrelación transacción–línea y anidamiento\ndel monitor. Complétalos en tu entrega." as N1
+@enduml

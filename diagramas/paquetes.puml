@@ -1,0 +1,26 @@
+@startuml paquetes
+skinparam dpi 150
+skinparam shadowing false
+title Renta de equipo audiovisual — paquetes y dependencias permitidas
+package "renta_audiovisual" {
+  package ui
+  package app
+  package servicio
+  package modelo
+  package funcional
+  package eventos
+  package concurrencia
+  package persistencia
+}
+ui ..> app : sólo importa app.controlador
+app ..> servicio
+app ..> modelo
+servicio ..> modelo
+servicio ..> eventos
+servicio ..> concurrencia
+servicio ..> persistencia
+funcional ..> modelo
+persistencia ..> modelo
+note bottom of persistencia : sqlite3 + pickle\n(únicos módulos con SQL)
+note right of ui : sin sqlite3, sin SQL,\nsin reglas de negocio
+@enduml

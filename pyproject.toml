@@ -1,0 +1,37 @@
+[project]
+name = "renta_audiovisual"
+version = "0.1.0"
+description = "Miniproyecto: Renta de equipo audiovisual (Tecnologías de Programación, TecNM-ITO)"
+requires-python = ">=3.13"
+# TODO E01: escribe tu nombre y correo institucional
+authors = [{ name = "Tu nombre" }]
+dependencies = []
+
+[project.optional-dependencies]
+# TODO E01: conserva sólo la tecnología de UI que elijas (tkinter viene con Python)
+web = ["nicegui>=2.0"]
+dev = ["pytest>=8", "mypy>=1.11", "ruff>=0.6"]
+
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["renta_audiovisual*"]
+
+[tool.pytest.ini_options]
+python_files = ["pruebas_*.py"]
+addopts = "-q"
+
+[tool.mypy]
+python_version = "3.13"
+strict = true
+packages = ["renta_audiovisual"]
+exclude = ["renta_audiovisual/ui/"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
