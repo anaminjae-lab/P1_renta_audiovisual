@@ -18,17 +18,22 @@ class Tarifable(ABC):
 
     def cotizar(self, dias: int) -> float:
         """Método plantilla: valida ``dias`` y delega en ``_calcular``.
-
         Raises:
             ValueError: si ``dias`` es menor que 1.
         """
+        if dias <1:
+            raise ValueError("Los dias de renta deben ser al menos 1")
+        return self._calcular(dias)
         # TODO E02: implementar `Tarifable.cotizar`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     def cotizar_con_iva(self, dias: int) -> float:
         """Cotización con IVA, redondeada a dos decimales."""
         # TODO E02: implementar `Tarifable.cotizar_con_iva`
-        raise NotImplementedError
+        subtotal = self.cotizar(dias)
+        total = subtotal * (1 + self.IVA)
+        return self.redondear(total)
+        #raise NotImplementedError
 
     @abstractmethod
     def _calcular(self, dias: int) -> float:
@@ -37,11 +42,13 @@ class Tarifable(ABC):
     @staticmethod
     def redondear(valor: float) -> float:
         """Redondea a dos decimales (no depende de la instancia)."""
+        return round(valor, 2)
         # TODO E02: implementar `Tarifable.redondear`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @classmethod
     def moneda(cls) -> str:
         """Devuelve la moneda declarada en la clase (construccion09bis.py)."""
+        return cls.MONEDA
         # TODO E02: implementar `Tarifable.moneda`
-        raise NotImplementedError
+        #raise NotImplementedError

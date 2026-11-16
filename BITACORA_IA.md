@@ -8,7 +8,8 @@ y cómo lo comprobaste. Sin bitácora, todo código se considera no declarado.
 
 | # | Fecha | Grupo | Herramienta | Qué pediste (resumen del prompt) | Qué aceptaste / rechazaste / modificaste y por qué | Evidencia de verificación (prueba, mypy, traza, ejecución) |
 |---|---|---|---|---|---|---|
-| 1 | | | | | | |
+| 1 | 2026-11-11 | E01.2 | ChatGPT | Ventajas y desventajas de cada tecnología. | Se eligió Tkinter + ttk por su integración con Python y sus componentes gráficos. | Se ejecutó py -3.13 -m tkinter y se abrió la ventana de prueba.|
+| 2 | 2026-11-16 | E02 | ChatGPT | Explicación de los métodos ya implementados en contrato.py e implementación de Tarifable. | Acepté utilizar cotizar() para validar los días y delegar el cálculo a _calcular(), porque permite que cada subtipo defina su tarifa sin repetir la validación. | contrato.py; pruebas manuales: 900.0, 1044.0, 125.68 y MXN. pytest: 14 fallidas por TODO de grupos posteriores. |
 
 ## 2. Contraejemplos: errores del LLM que detectaste (mínimo 3)
 

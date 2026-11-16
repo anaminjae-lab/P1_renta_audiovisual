@@ -7,8 +7,12 @@ concurrencia, persistencia}; persistencia → modelo; modelo no depende de nadie
 
 PROYECTO = "Renta de equipo audiovisual"
 
-
 def info() -> dict[str, str]:
     """Metadatos del proyecto mostrados por la UI y el README."""
     # TODO E01: implementar `info`
-    raise NotImplementedError
+    return {
+        "nombre": PROYECTO,
+        "version": "0.1.0",
+        "python": "3.13",
+        "interfaz": "Tkinter + ttk"
+    }

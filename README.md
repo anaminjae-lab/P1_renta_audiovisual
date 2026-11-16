@@ -30,7 +30,24 @@ python -m renta_audiovisual.ui.<tu_ui>     # ejecuta tu interfaz
 Enlace: **<pega aquí el enlace al video de máximo 5 minutos>**
 
 ## Justificación de la tecnología de UI
-<Explica qué tecnología elegiste, por qué, y cómo llevas los eventos del hilo monitor al hilo de UI.>
+
+Para el desarrollo de la interfaz gráfica del sistema de renta de equipo audiovisual se seleccionó **Tkinter con ttk**, utilizando Python 3.13.
+
+La elección fue en base a los siguientes aspectos:
+
+1. **Integración con Python:** Tkinter forma parte de la biblioteca estándar de Python, por lo que no requiere instalar un framework gráfico adicional.
+
+2. **Componentes de interfaz:** el módulo `ttk` proporciona widgets temáticos como botones, formularios, listas y `Treeview`, que permitirán visualizar el inventario, las productoras y las rentas.
+
+3. **Separación de responsabilidades:** la interfaz se comunicará exclusivamente con `app.controlador`, evitando incluir consultas SQL o reglas de negocio en las ventanas.
+
+4. **Manejo de concurrencia:** los eventos generados por el monitor se recibirán mediante una cola y se procesarán desde el hilo de la interfaz utilizando `root.after(500, sondear)`, de acuerdo con la especificación del proyecto.
+
+5. **Mantenimiento y aprendizaje:** esta tecnología permite desarrollar una aplicación de escritorio sin introducir la complejidad adicional de un servidor web, facilitando la comprensión del código.
+
+**Conclusión:** Tkinter con ttk cumple los requisitos de interfaz establecidos para el miniproyecto y permite concentrar el desarrollo en el modelo de objetos, la persistencia y la concurrencia.
+
+**Referencia:** Python Software Foundation. *tkinter — Python interface to Tcl/Tk*. Documentación oficial de Python 3.13. https://docs.python.org/3.13/library/tkinter.html
 
 ## Decisiones de diseño
 <Describe al menos 5 decisiones: p. ej. por qué `Linea` es anidada, cómo resolviste la colisión de
