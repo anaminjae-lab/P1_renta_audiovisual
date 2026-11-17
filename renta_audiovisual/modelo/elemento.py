@@ -7,6 +7,7 @@ p10_match.py (``match``).
 """
 
 from abc import abstractmethod
+from math import isfinite
 from typing import ClassVar
 
 from .clave import Clave
@@ -18,38 +19,71 @@ class Equipo(Tarifable):
 
     PREFIJO: ClassVar[str] = ""
 
-    def __init__(self, nombre: str, precio_base: float, clave: str | None = None) -> None:
+    def __init__(
+            self,
+            nombre: str,
+            precio_base: float,
+            clave: str | None = None
+    ) -> None:
         """Inicializa nombre, precio base y clave (se genera si es ``None``)."""
+
+        self.nombre = nombre
+        self.precio_base = precio_base
+
+        if clave is None:
+            self.__clave = Clave.siguiente(self.PREFIJO)
+        else:
+            if(
+                not Clave.es_valida(clave)
+                or not clave[:3] != self.PREFIJO
+            ):
+                raise ValueError("Clave invalida para este tipo de equipo")
+
+            Clave.registrar(clave)
+            self.__clave = clave
         # TODO E04: implementar `Equipo.__init__`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @property
     def clave(self) -> str:
         """Identidad inmutable (solo lectura)."""
+        return self.__clave
         # TODO E04: implementar `Equipo.clave`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @property
     def nombre(self) -> str:
         """Nombre descriptivo, no vacío."""
+        return self._nombre
         # TODO E04: implementar `Equipo.nombre`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @nombre.setter
     def nombre(self, valor: str) -> None:
+        nombre_limpio = valor.strip()
+
+        if not nombre_limpio:
+            raise ValueError("El nombre no puede estar vacio")
+
+        self._nombre = nombre_limpio
         # TODO E04: implementar `Equipo.nombre`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @property
     def precio_base(self) -> float:
         """Precio base por día, estrictamente positivo."""
+        return self._precio_base
         # TODO E04: implementar `Equipo.precio_base`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @precio_base.setter
     def precio_base(self, valor: float) -> None:
+        if not isfinite(valor) or valor <= 0:
+            raise ValueError("El precio base debe ser positivo y finito")
+
+        self._precio_base = valor
         # TODO E04: implementar `Equipo.precio_base`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     @property
     def tipo(self) -> str:
@@ -70,8 +104,11 @@ class Equipo(Tarifable):
 
     def _calcular(self, dias: int) -> float:
         """Tarifa del subtipo por ``dias`` (fórmula: §6 del DOCX, por deducir)."""
+        subtotal = self.precio_base * dias
+        total = subtotal * self.factor() * (1 + self.recargo())
+        return self.redondear(total)
         # TODO E04: implementar `Equipo._calcular`
-        raise NotImplementedError
+        #raise NotImplementedError
 
     def copiar(self) -> "Equipo":
         """Crea un objeto equivalente con clave NUEVA (identidad distinta)."""
